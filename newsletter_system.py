@@ -118,6 +118,7 @@ def hash_password(password):
 def verify_password(input_password, stored_password):
     return hash_password(input_password) == stored_password
 
+
 def admin_login():
     st.sidebar.title("Admin Login")
     username = st.sidebar.text_input("Username")

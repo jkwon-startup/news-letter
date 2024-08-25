@@ -13,7 +13,6 @@ import pandas as pd
 import plotly.express as px
 import os
 from dotenv import load_dotenv
-
 # 환경 변수 로드
 load_dotenv()
 
@@ -119,6 +118,11 @@ def admin_login():
     username = st.sidebar.text_input("사용자명")
     password = st.sidebar.text_input("비밀번호", type="password")
     if st.sidebar.button("로그인"):
+        # 디버그 정보 출력
+        st.sidebar.write(f"입력된 사용자명: {username}")
+        st.sidebar.write(f"저장된 사용자명: {ADMIN_USERNAME}")
+        st.sidebar.write(f"비밀번호 일치: {verify_password(password, ADMIN_PASSWORD)}")
+        
         if username == ADMIN_USERNAME and verify_password(password, ADMIN_PASSWORD):
             st.session_state.admin_logged_in = True
             st.sidebar.success("로그인 성공")
@@ -158,6 +162,10 @@ def admin_dashboard():
         st.success("뉴스레터가 성공적으로 발송되었습니다")
 
 def main():
+    def main():
+     st.write(f"ADMIN_USERNAME: {ADMIN_USERNAME}")
+    st.write(f"ADMIN_PASSWORD: {'*' * len(ADMIN_PASSWORD)}")
+   
     if 'admin_logged_in' not in st.session_state:
         st.session_state.admin_logged_in = False
 

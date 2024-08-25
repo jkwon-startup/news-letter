@@ -31,9 +31,17 @@ ADMIN_USERNAME = st.secrets["ADMIN_USERNAME"]
 ADMIN_PASSWORD = st.secrets["ADMIN_PASSWORD"]
 
 def get_google_sheets_service():
-    creds_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"])
-    creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
-    return build('sheets', 'v4', credentials=creds)
+    try:
+        creds_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"])
+        st.write("Credentials loaded successfully")
+        st.write(f"Scopes: {SCOPES}")
+        creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+        st.write("Credentials created successfully")
+        return build('sheets', 'v4', credentials=creds)
+    except Exception as e:
+        st.error(f"Error in get_google_sheets_service: {str(e)}")
+        st.write(f"Credentials dict: {creds_dict}")
+        raise
 
 def save_subscriber(name, email, keywords):
     service = get_google_sheets_service()

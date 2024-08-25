@@ -4,38 +4,35 @@ from bs4 import BeautifulSoup
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from google.oauth2.service_account import Credentials
+from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 import schedule
 import time
 from datetime import datetime
 import pandas as pd
 import plotly.express as px
-import os
-from dotenv import load_dotenv
-# 환경 변수 로드
-load_dotenv()
+import json
 
 # Streamlit 페이지 설정
 st.set_page_config(page_title="AI 및 1인 창업 뉴스 애그리게이터", layout="wide")
 
 # Google Sheets API 설정
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SERVICE_ACCOUNT_FILE = os.getenv('SERVICE_ACCOUNT_FILE')
-SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
+SPREADSHEET_ID = st.secrets["SPREADSHEET_ID"]
 
 # 이메일 설정
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-SENDER_EMAIL = os.getenv('SENDER_EMAIL')
-SENDER_PASSWORD = os.getenv('SENDER_PASSWORD')
+SENDER_EMAIL = st.secrets["SENDER_EMAIL"]
+SENDER_PASSWORD = st.secrets["SENDER_PASSWORD"]
 
 # 관리자 인증 정보
-ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
-ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+ADMIN_USERNAME = st.secrets["ADMIN_USERNAME"]
+ADMIN_PASSWORD = st.secrets["ADMIN_PASSWORD"]
 
 def get_google_sheets_service():
-    creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    creds_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"])
+    creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
     return build('sheets', 'v4', credentials=creds)
 
 def save_subscriber(name, email, keywords):
@@ -162,10 +159,9 @@ def admin_dashboard():
         st.success("뉴스레터가 성공적으로 발송되었습니다")
 
 def main():
-    def main():
-     st.write(f"ADMIN_USERNAME: {ADMIN_USERNAME}")
-    st.write(f"ADMIN_PASSWORD: {'*' * len(ADMIN_PASSWORD)}")
-   
+    st.write(f"ADMIN_USERNAME is set: {'ADMIN_USERNAME' in st.secrets}")
+    st.write(f"ADMIN_PASSWORD is set: {'ADMIN_PASSWORD' in st.secrets}")
+
     if 'admin_logged_in' not in st.session_state:
         st.session_state.admin_logged_in = False
 
